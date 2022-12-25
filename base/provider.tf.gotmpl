@@ -1,0 +1,31 @@
+terraform {
+  {{ if eq .Tier 1 -}}
+  backend "s3" {
+    bucket = "{{.Env}}.terraform.{{.Domain}}"
+    key    = "{{.Project}}/state.tfstate"
+    region = "ap-southeast-1"
+  }
+  {{- end -}}
+  {{- if eq .Tier 2 -}}
+    backend "s3" {
+    bucket = "{{.Env}}.terraform.{{.Domain}}"
+    key    = "{{.Project}}/{{.AwsRegion}}/state.tfstate"
+    region = "ap-southeast-1"
+  }
+  {{- end -}} 
+  {{- if eq .Tier 3 -}}
+    backend "s3" {
+    bucket = "{{.Env}}.terraform.{{.Domain}}"
+    key    = "{{.Project}}/{{.AwsRegion}}/{{.Group}}/state.tfstate"
+    region = "ap-southeast-1"
+  }
+  {{- end }} 
+}
+
+provider "aws" {
+  region = var.region
+}
+
+variable "region" {
+  default = "ap-southeast-1"
+}
